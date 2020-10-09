@@ -17,6 +17,16 @@ MYSQL = MySQL(APP)
 #Configuracion
 APP.secret_key = 'mysecretkey'
 
+def getLogin(user, password):
+    if (user == 'dventura' and password == 'Diego123.'):
+        return True
+    else:
+        return False
+
+def registrarUsuario(user, mail, password):
+    print(f'Regitrando al {user} con correo {mail} y clave {password}')
+    return True
+
 @APP.route('/')
 def index():
     cur = MYSQL.connection.cursor()
@@ -63,6 +73,37 @@ def deleteUser(id):
     MYSQL.connection.commit()
     flash('Usuario eliminado satisfactoriamente')
     return redirect(url_for('index'))
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/registro')
+def registro():
+    return render_template('registro.html')
+
+@app.route('/ingreso_tienda', methods=['POST'])
+def ingreso_tienda():
+    if request.method == 'POST':
+        usr = request.form['username']
+        pwd = request.form['password']
+
+        if getLogin(usr,pwd):
+            return render_template('index.html')
+        else:
+            return render_template('login.html', mensaje = 'Error, acceso denegado')
+
+@app.route('/registro_usr', methods=['POST'])
+def registro_usr():
+    if request.method == 'POST':
+        usr = request.form['username']
+        mail = request.form['mail']
+        pwd = request.form['password']
+
+        if(registrarUsuario(usr,mail,pwd)):
+            return render_template('login.html', mensaje='Registro correcto')
+        else:
+            return render_template('registro.html', mensaje='Error durante registro')
 
 if __name__ == '__main__':
     APP.run(
