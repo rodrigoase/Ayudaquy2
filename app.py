@@ -50,7 +50,7 @@ def addUser():
 @APP.route('/editarUsuario/<id>')
 def getUser(id):
     cur = MYSQL.connection.cursor()
-    cur.execute('SELECT * FROM TBUSERS WHERE ID = %s', (id))
+    cur.execute('SELECT * FROM TBUSERS WHERE ID = %s', [id])
     data = cur.fetchall()
     return render_template('editarUsuario.html', usuario = data[0])
 
@@ -61,7 +61,7 @@ def updateUser(id):
         email = request.form['email']
         estado = request.form['estado']
         cur = MYSQL.connection.cursor()
-        cur.execute('UPDATE TBUSERS SET FULLNAME = %s, EMAIL = %s, ESTADO = %s  WHERE ID = %s', (fullname,email,estado,id))
+        cur.execute('UPDATE TBUSERS SET FULLNAME = %s, EMAIL = %s, ESTADO = %s  WHERE ID = %s', [fullname,email,estado,id])
         MYSQL.connection.commit()
         flash('Usuario actualizado satisfactoriamente')
         return redirect(url_for('index'))
@@ -69,43 +69,73 @@ def updateUser(id):
 @APP.route('/eliminarUsuario/<id>')
 def deleteUser(id):
     cur = MYSQL.connection.cursor()
-    cur.execute('DELETE FROM TBUSERS WHERE ID = %s', (id))
+    cur.execute('DELETE FROM TBUSERS WHERE ID = %s', [id])
     MYSQL.connection.commit()
     flash('Usuario eliminado satisfactoriamente')
     return redirect(url_for('index'))
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
+@APP.route('/mapa')
+def gmap():
+    cur = MYSQL.connection.cursor()
+    cur.execute('SELECT * FROM TBPLACES')
+    data = cur.fetchall()
+    #print(data)
+    return render_template('map.html', ubicaciones = data)
 
-@app.route('/registro')
-def registro():
-    return render_template('registro.html')
+@APP.route('/ubicaciones')
+def places():
+    cur = MYSQL.connection.cursor()
+    cur.execute('SELECT * FROM TBPLACES')
+    data = cur.fetchall()
+    return render_template('ubicaciones.html', ubicaciones = data)
 
-@app.route('/ingreso_tienda', methods=['POST'])
-def ingreso_tienda():
+@APP.route('/crearUbicacion', methods=['POST'])
+def addPlace():
     if request.method == 'POST':
-        usr = request.form['username']
-        pwd = request.form['password']
+        name = request.form['name']
+        description = request.form['description']
+        latitude = request.form['latitude']
+        longitude = request.form['longitude']
+        estado = request.form['estado']
+        cur = MYSQL.connection.cursor()
+        cur.execute('INSERT INTO TBPLACES (name,description,latitude,longitude,estado) VALUES (%s, %s, %s, %s, %s)',
+        (name,description,latitude,longitude,estado))
+        MYSQL.connection.commit()
+        flash('Ubicación creada satisfactoriamente')
+        return redirect(url_for('places'))
 
-        if getLogin(usr,pwd):
-            return render_template('index.html')
-        else:
-            return render_template('login.html', mensaje = 'Error, acceso denegado')
+@APP.route('/editarUbicacion/<id>')
+def getPlace(id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('SELECT * FROM TBPLACES WHERE ID = %s', [id])
+    data = cur.fetchall()
+    return render_template('editarUbicacion.html', ubicacion = data[0])
 
-@app.route('/registro_usr', methods=['POST'])
-def registro_usr():
+@APP.route('/actualizarUbicacion/<id>', methods = ['POST'])
+def updatePlace(id):
     if request.method == 'POST':
-        usr = request.form['username']
-        mail = request.form['mail']
-        pwd = request.form['password']
+        name = request.form['name']
+        description = request.form['description']
+        latitude = request.form['latitude']
+        longitude = request.form['longitude']
+        estado = request.form['estado']
+        cur = MYSQL.connection.cursor()
+        cur.execute('UPDATE TBPLACES SET NAME = %s, DESCRIPTION = %s, LATITUDE = %s, LONGITUDE = %s, ESTADO = %s  WHERE ID = %s', [name,description,latitude,longitude,estado,id])
+        MYSQL.connection.commit()
+        flash('Ubicación actualizada satisfactoriamente')
+        return redirect(url_for('places'))
 
-        if(registrarUsuario(usr,mail,pwd)):
-            return render_template('login.html', mensaje='Registro correcto')
-        else:
-            return render_template('registro.html', mensaje='Error durante registro')
+
+@APP.route('/eliminarUbicacion/<id>')
+def deletePlace(id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('DELETE FROM TBPLACES WHERE ID = %s', [id])
+    MYSQL.connection.commit()
+    flash('Ubicación eliminada satisfactoriamente')
+    return redirect(url_for('places'))
 
 if __name__ == '__main__':
     APP.run(
         debug = True,
     )
+

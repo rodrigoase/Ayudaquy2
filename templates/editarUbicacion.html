@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="col-md-4 offset-md-4">
+    <div class="card card-body bg-dark">
+        <form action="/actualizarUbicacion/{{ubicacion.0}}" method="POST">
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Nombre" value="{{ ubicacion.1 }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <input type="text" name="description" placeholder="Descripción" value="{{ ubicacion.2 }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <input type="text" name="latitude" placeholder="Latitud" value="{{ ubicacion.3 }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <input type="text" name="longitude" placeholder="Longitud" value="{{ ubicacion.4 }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <select name="estado" id="estado" class="form-control">
+                    {% if ubicacion.5 == 'ACTIVO' %}
+                        <option value="ACTIVO" selected>Activo</option>
+                        <option value="INACTIVO">Inactivo</option>
+                    {% else %}
+                        <option value="ACTIVO">Activo</option>
+                        <option value="INACTIVO" selected>Inactivo</option>
+                    {% endif %}
+                </select>    
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

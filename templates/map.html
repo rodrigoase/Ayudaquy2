@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Local Schools</title>
+    <style>
+        #map{
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        crossorigin="anonymous">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCiCy-smfSa9zdvq0Pe6YvK1_DirchJZIM&callback=initMap"
+    type="text/javascript"></script>
+    <script type="text/javascript">
+        function initMap() {
+            //Nuevo Mapa
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -9.189967, lng: -75.015152}, //coordenadas de Peru
+                zoom: 5.5
+            });
+
+            {% for i in ubicaciones %}
+                //Agregar marcador
+                //agregarMarcador({lat: -16.3989, lng: -71.535});
+                agregarMarcador({coords:{lat: {{i.3}}, lng: {{i.4}} }});
+            {% endfor %}  
+
+            function agregarMarcador(props){
+                var marcador = new google.maps.Marker({
+                position:props.coords,
+                map:map});
+            }
+        }
+    </script>
+    
+</head>
+<body>
+<div class="container">
+    <div id="map"></div>
+</div>
+</body>
+</html>
