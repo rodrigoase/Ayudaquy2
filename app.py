@@ -77,7 +77,7 @@ def deleteUser(id):
 @APP.route('/mapa')
 def gmap():
     cur = MYSQL.connection.cursor()
-    cur.execute('SELECT * FROM TBPLACES')
+    cur.execute('SELECT * FROM TBPLACES WHERE ESTADO=%s', ['ACTIVO'])
     data = cur.fetchall()
     #print(data)
     return render_template('map.html', ubicaciones = data)
@@ -92,17 +92,28 @@ def places():
 @APP.route('/crearUbicacion', methods=['POST'])
 def addPlace():
     if request.method == 'POST':
-        name = request.form['name']
-        description = request.form['description']
-        latitude = request.form['latitude']
-        longitude = request.form['longitude']
-        estado = request.form['estado']
-        cur = MYSQL.connection.cursor()
-        cur.execute('INSERT INTO TBPLACES (name,description,latitude,longitude,estado) VALUES (%s, %s, %s, %s, %s)',
-        (name,description,latitude,longitude,estado))
-        MYSQL.connection.commit()
-        flash('Ubicación creada satisfactoriamente')
-        return redirect(url_for('places'))
+        while True:
+            name = request.form['name']
+            description = request.form['description']
+            latitude = request.form['latitude']
+            longitude = request.form['longitude']
+            estado = request.form['estado']
+            cur = MYSQL.connection.cursor()
+            cur.execute('INSERT INTO TBPLACES (name,description,latitude,longitude,estado) VALUES (%s, %s, %s, %s, %s)',
+            (name,description,latitude,longitude,estado))
+            MYSQL.connection.commit()
+            flash('Ubicación creada satisfactoriamente')
+            return redirect(url_for('places'))
+        try:
+            name = str(name)
+            description = str(description)
+            latitude = float(latitude)
+            longitude = float(longitude)
+            estado = str(estado)
+
+            return name, description,latitude,longitude,estado
+        except ValueError:
+            print ("ATENCIÓN: Debe llenar todos los campos.")
 
 @APP.route('/editarUbicacion/<id>')
 def getPlace(id):
