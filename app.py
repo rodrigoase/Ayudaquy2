@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
+#from flask_cors import CORS
 
 APP = Flask(
     __name__,
@@ -7,10 +8,12 @@ APP = Flask(
     static_url_path='/',
 )
 
+#CORS(APP)
+
 #Conexión a MySQL
 APP.config['MYSQL_HOST'] = 'localhost'
 APP.config['MYSQL_USER'] = 'root'
-# APP.config['MYSQL_PASSWORD'] = 'password'
+#APP.config['MYSQL_PASSWORD'] = 'root'
 APP.config['MYSQL_DB'] = 'ayudaquydb'
 MYSQL = MySQL(APP)
 
@@ -145,8 +148,10 @@ def deletePlace(id):
     flash('Ubicación eliminada satisfactoriamente')
     return redirect(url_for('places'))
 
+from AyudaSocial.socialNetwork import route
+
 if __name__ == '__main__':
     APP.run(
-        debug = True,
+        debug = True
     )
 

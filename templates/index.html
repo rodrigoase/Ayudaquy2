@@ -1,10 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <h1>prueba</h1>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <style>
+    .container-bg-blank{
+        background: white;
+    }
+    .container-bg-fb{
+        background: #EDEFF3;
+    }
+    </style>
+
+    <div class="container">
+        {% include '_Mensaje.html' %}
+        <form action="{{ url_for('posts') }}" method="post">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <h2 class="text-center bg-success p-2" style="color: white">Escriba su publicación</h2>
+                    <label for="exampleFormControlInput1">Autor de la publicación:</label>
+                    <input class="form-control" type="text" placeholder="Nombre" name="name">
+                    <p></p>
+                    <label for="exampleFormControlInput1">Mensaje:</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" name="post"></textarea>
+                    <p></p>
+                    <input type="submit" value="Publicar" class="float-right">
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </form>
+        <hr>
+        <h2>Publicaciones</h2>
+        {% for post in posts %}
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8 border mt-3 container-bg-blank">
+                    <p></p>
+                    <label for="exampleFormControlInput1"><b>Nombre: {{ post[1] }}</b></label>
+                    <div>
+                        {{ post[2] }}
+                    </div>
+                    <form action="{{ url_for('delete', id=post[0]) }}" method="post">
+                        <input type="submit" value="X Eliminar" class="float-right btn-danger ml-1">
+                    </form>
+                    <button type="button" class="float-right btn-success" data-toggle="modal" data-target="#exampleModal-{{ post[0] }}">✓ Comentarios</button>
+                    <br>
+                    <p></p>
+                    <div class="container">
+                        {% for comment in comments %}
+                            {% if post[0] == comment[1] %}
+                                <div class="row container-bg-fb border">
+                                    <div class="col-1">
+                                        <img src="{{ url_for('static', filename='images/profile.jpg' ) }}" width="50px"height="40px">
+                                    </div>
+                                    <div class="col-6">
+                                        <b>{{ comment[2] }}</b> : {{ comment[3] }}
+                                    </div>
+                                    <div class="col-3"></div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <p></p>
+                    </div>
+
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal-{{ post[0] }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Publicacion: {{ post[0] }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ url_for('comments') }}" method="POST">
+                            <div class="modal-body">
+                                <h5>Ingrese comentarios</h5>
+                                <input type="hidden" name="id_post" id="id_post" value="{{ post[0] }}">
+                                <input class="form-control" type="text" placeholder="Nombre" name="name">
+                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" name="content" placeholder="Comentario"></textarea>
+                                <br>
+                                <button type="submit" class="btn btn-success float-rigth">Publicar</button>
+                            </div>
+                        </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+
+
+
+        <p></p>
+
+
+    </div>
+
+{% endblock content %}
