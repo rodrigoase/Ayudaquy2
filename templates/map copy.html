@@ -1,7 +1,20 @@
-{% extends 'layout.html' %}
-
-{% block body %}
-<div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Local Schools</title>
+    <style>
+        #map{
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+        crossorigin="anonymous">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCiCy-smfSa9zdvq0Pe6YvK1_DirchJZIM&callback=initMap"
+    type="text/javascript"></script>
     <script type="text/javascript">
         function initMap() {
             //Nuevo Mapa
@@ -9,7 +22,7 @@
                 center: {lat: -9.189967, lng: -75.015152}, //coordenadas de Peru
                 zoom: 5.5
             });
-    
+
             {% for i in ubicaciones %}
                 //Agregar marcador
                 //agregarMarcador({lat: -16.3989, lng: -71.535});
@@ -18,12 +31,12 @@
                     content:' <a class="nav-link" href="/perfilUbicacion/{{i.0}}">{{i.1}}</a>'
                 });
             {% endfor %}  
-    
+
             function agregarMarcador(props){
                 var marcador = new google.maps.Marker({
                 position:props.coords,
                 map:map});
-    
+
                 if(props.content){
                     var infoWindow = new google.maps.InfoWindow({
                     content:props.content
@@ -37,13 +50,10 @@
         }
     </script>
     
-    <div class="container pt-5">
-        <div class="jumbotron" style="background-image: url({{ url_for('static',filename='img/titicaca.jpg') }});
-                                  background-size: 1200px 300px;
-                                  background-position:center center;">
-            <h1 class="display-4" style="color: white; font-weight: bold;;-webkit-text-stroke: 2px black">Mapa</h1>
-        </div>
-        <div id="map" class="rounded border border-info"></div>
-    </div>
+</head>
+<body>
+<div class="container">
+    <div id="map"></div>
 </div>
-{% endblock %}
+</body>
+</html>
