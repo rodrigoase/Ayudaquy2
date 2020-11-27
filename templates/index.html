@@ -44,9 +44,11 @@
                     <div>
                         {{ post[2] }}
                     </div>
+                    {% if session['rol']=='ADMIN' %}
                     <form action="/delete/{{post.0}}" method="post">
                         <input type="submit" value="X Eliminar" class="float-right btn-danger ml-1">
                     </form>
+                    {% endif %}
                     <button type="button" class="float-right btn-success" data-toggle="modal" data-target="#exampleModal-{{ post[0] }}">✓ Comentarios</button>
                     <br>
                     <p></p>
