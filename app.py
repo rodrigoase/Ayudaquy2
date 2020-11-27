@@ -32,7 +32,9 @@ def page_not_found(e):
 
 @APP.route('/')
 def index():
-    return render_template('index.html')
+    posts = get_posts()
+    comments = get_comments()
+    return render_template('index.html', posts= posts, comments=comments)
 
 @APP.route('/login', methods=["GET","POST"])
 def login():
@@ -247,9 +249,10 @@ def posts():
             flash('Se acaba de publicar tu mensaje!', 'success')
         else:
             flash('Post no se pudo publicar', 'danger')
-    posts = get_posts()
-    comments = get_comments()
-    return render_template('index.html', posts= posts, comments=comments)
+    #posts = get_posts()
+    #comments = get_comments()
+    #return render_template('index.html', posts= posts, comments=comments)
+    return redirect(url_for('index'))
 
 @APP.route('/delete/<int:id>', methods=['POST','GET'])
 def delete(id):
