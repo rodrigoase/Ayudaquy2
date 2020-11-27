@@ -10,10 +10,12 @@ APP = Flask(
     static_url_path='/',
 )
 
+#CORS(APP)
+
 #Conexión a MySQL
 APP.config['MYSQL_HOST'] = 'localhost'
 APP.config['MYSQL_USER'] = 'root'
-# APP.config['MYSQL_PASSWORD'] = 'password'
+#APP.config['MYSQL_PASSWORD'] = 'root'
 APP.config['MYSQL_DB'] = 'ayudaquydb'
 #APP.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 MYSQL = MySQL(APP)
@@ -204,11 +206,14 @@ def updatePlace(id):
         image = request.files['image'].filename
         estado = request.form['estado']
         cur = MYSQL.connection.cursor()
-        cur.execute('UPDATE TBPLACES SET NAME = %s, DESCRIPTION = %s, LATITUDE = %s, LONGITUDE = %s, IMAGE = %s, ESTADO = %s  WHERE ID = %s', [name,description,latitude,longitude,image,estado,id])
+        if len(image) != 0:
+            f = request.files['image']
+            filename = secure_filename(f.filename)
+            f.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
+            cur.execute('UPDATE TBPLACES SET NAME = %s, DESCRIPTION = %s, LATITUDE = %s, LONGITUDE = %s, IMAGE = %s, ESTADO = %s  WHERE ID = %s', [name,description,latitude,longitude,image,estado,id])
+        else:
+            cur.execute('UPDATE TBPLACES SET NAME = %s, DESCRIPTION = %s, LATITUDE = %s, LONGITUDE = %s, ESTADO = %s  WHERE ID = %s', [name,description,latitude,longitude,estado,id])
         MYSQL.connection.commit()
-        f = request.files['image']
-        filename = secure_filename(f.filename)
-        f.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
         flash('Ubicación actualizada satisfactoriamente')
         return redirect(url_for('places'))
 
@@ -228,7 +233,72 @@ def perfilUbicacion(id):
     data = cur.fetchall()
     return render_template('perfilTemplate.html', ubicacion = data[0])
 
+#Servicios REST de publicaciones y comentarios
+@APP.route('/post', methods=['GET','POST'])
+def posts():
+    if request.method == 'GET':
+        pass
+    if request.method == 'POST':
+        print('paso')
+        name = request.form.get('name')
+        post = request.form.get('post')
+        if len(name) > 0 and len(post) > 0:
+            create_post(str(name), str(post))
+            flash('Se acaba de publicar tu mensaje!', 'success')
+        else:
+            flash('Post no se pudo publicar', 'danger')
+    posts = get_posts()
+    comments = get_comments()
+    return render_template('index.html', posts= posts, comments=comments)
+
+@APP.route('/delete/<int:id>', methods=['POST','GET'])
+def delete(id):
+    posts = get_posts()
+    if request.method == 'POST':
+        delete_post(id)
+        flash('Publicación eliminada', 'success')
+        return redirect(url_for('posts'))
+
+@APP.route('/comments', methods=['POST'])
+def comments():
+    if request.method == 'POST':
+        id_post = request.form.get('id_post')
+        name = request.form.get('name')
+        content = request.form.get('content')
+        print(id_post, name, content)
+        create_comments(id_post,name,content)
+        return redirect(url_for('posts'))
+
+#Funciones de las publicaciones y comentarios
+def create_post(name, content):
+    cur = MYSQL.connection.cursor()
+    cur.execute('insert into posts (name, content) values (%s, %s)', (name, content))
+    MYSQL.connection.commit()
+
+def get_posts():
+    cur = MYSQL.connection.cursor()
+    cur.execute('select * from posts order by FechaCreacion')
+    posts = cur.fetchall()
+    return posts
+
+def delete_post(id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('Delete from posts where id = ' + str(id))
+    MYSQL.connection.commit()
+
+def create_comments(id_post, name, content):
+    cur = MYSQL.connection.cursor()
+    cur.execute('insert into comments (id_post, name, content) values (%s, %s, %s)', (id_post, name, content))
+    MYSQL.connection.commit()
+
+def get_comments():
+    cur = MYSQL.connection.cursor()
+    cur.execute('select * from comments order by FechaCreacion')
+    comments = cur.fetchall()
+    return comments
+
+
 if __name__ == '__main__':
     APP.run(
-        debug = True,
+        debug = True
     )
