@@ -236,10 +236,8 @@ def perfilUbicacion(id):
     return render_template('perfilTemplate.html', ubicacion = data[0])
 
 #Servicios REST de publicaciones y comentarios
-@APP.route('/post', methods=['GET','POST'])
+@APP.route('/post', methods=['POST'])
 def posts():
-    if request.method == 'GET':
-        pass
     if request.method == 'POST':
         print('paso')
         name = request.form.get('name')
@@ -249,18 +247,15 @@ def posts():
             flash('Se acaba de publicar tu mensaje!', 'success')
         else:
             flash('Post no se pudo publicar', 'danger')
-    #posts = get_posts()
-    #comments = get_comments()
-    #return render_template('index.html', posts= posts, comments=comments)
     return redirect(url_for('index'))
 
-@APP.route('/delete/<int:id>', methods=['POST','GET'])
+@APP.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
     posts = get_posts()
     if request.method == 'POST':
         delete_post(id)
         flash('Publicación eliminada', 'success')
-        return redirect(url_for('posts'))
+        return redirect(url_for('index'))
 
 @APP.route('/comments', methods=['POST'])
 def comments():
@@ -270,7 +265,7 @@ def comments():
         content = request.form.get('content')
         print(id_post, name, content)
         create_comments(id_post,name,content)
-        return redirect(url_for('posts'))
+        return redirect(url_for('index'))
 
 #Funciones de las publicaciones y comentarios
 def create_post(name, content):
