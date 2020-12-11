@@ -36,6 +36,10 @@ def index():
     comments = get_comments()
     return render_template('index.html', posts= posts, comments=comments)
 
+@APP.route('/quienesSomos')
+def info():
+    return render_template('quienesSomos.html')
+
 @APP.route('/login', methods=["GET","POST"])
 def login():
     if request.method == "GET":
@@ -57,6 +61,7 @@ def login():
                     session['fullname'] = data[1]
                     session['email'] = data[4]
                     session['rol'] = data[6]
+                    session['idorg'] = data[8]
                     return redirect(url_for('index'))
                 else:
                     flash('El usuario está inactivo')
@@ -90,7 +95,41 @@ def registro():
         session['email'] = email
 
         return redirect(url_for('login'))
-        
+
+@APP.route('/registroOrganizacion', methods=["GET","POST"])
+def registroOrg():
+    if request.method == "GET":
+        return render_template('registroOrg.html')
+    else:
+        rsocial = request.form['rsocial']
+        ruc = request.form['ruc']
+        nrotelefono = request.form['nrotelefono']
+        email = request.form['email']
+        djurada = request.files['djurada']
+        password = request.form['ruc'].encode('utf-8')
+        hash_password = bcrypt.generate_password_hash(password,10).decode('utf-8')
+
+        cur = MYSQL.connection.cursor()
+        cur.execute('INSERT INTO TBORGANIZACION (rsocial,ruc,nrotelefono,email,djurada,estado) VALUES (%s, %s, %s, %s, %s, %s)',
+        (rsocial,ruc,nrotelefono,email,djurada,'INACTIVO'))
+        MYSQL.connection.commit()
+
+        cur = MYSQL.connection.cursor()
+        cur.execute('SELECT id FROM TBORGANIZACION WHERE ruc = %s', [ruc])
+        idorg = cur.fetchall()
+        cur.execute('INSERT INTO TBUSERS (fullname,email,password,rol,idorg,estado) VALUES (%s, %s, %s, %s, %s, %s)',
+        (rsocial,email,hash_password,'ORG',idorg,'INACTIVO'))
+        MYSQL.connection.commit()
+        #session['fullname'] = fullname
+        #session['email'] = email
+
+        return redirect(url_for('mensaje'))
+
+@APP.route('/mensaje', methods=["GET"])
+def mensaje():
+    if request.method == "GET":
+        return render_template('mensaje.html')
+
 @APP.route('/admin')
 def admin():
     cur = MYSQL.connection.cursor()
@@ -154,42 +193,43 @@ def gmap():
     #print(data)
     return render_template('map.html', ubicaciones = data)
 
+#Gestion de ubicaciones
+
 @APP.route('/ubicaciones')
 def places():
+    idorg= session['idorg']
     cur = MYSQL.connection.cursor()
-    cur.execute('SELECT * FROM TBPLACES')
+    if idorg == 0:
+        cur.execute('SELECT * FROM TBPLACES')
+    else:
+        cur.execute('SELECT * FROM TBPLACES WHERE IDORG = %s',[idorg])
     data = cur.fetchall()
     return render_template('ubicaciones.html', ubicaciones = data)
 
 @APP.route('/crearUbicacion', methods=['POST'])
 def addPlace():
     if request.method == 'POST':
-        while True:
-            name = request.form['name']
-            description = request.form['description']
-            latitude = request.form['latitude']
-            longitude = request.form['longitude']
-            image = request.files['image'].filename
-            estado = request.form['estado']
-            cur = MYSQL.connection.cursor()
-            cur.execute('INSERT INTO TBPLACES (name,description,latitude,longitude,image,estado) VALUES (%s, %s, %s, %s, %s, %s)',
-            (name,description,latitude,longitude,image,estado))
-            MYSQL.connection.commit()
+        name = request.form['name']
+        description = request.form['description']
+        latitude = request.form['latitude']
+        longitude = request.form['longitude']
+        image = request.files['image'].filename
+        estado = request.form['estado']
+        idorg = session['idorg']
+
+        cur = MYSQL.connection.cursor()
+        if len(image) != 0:
             f = request.files['image']
             filename = secure_filename(f.filename)
             f.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
-            flash('Ubicación creada satisfactoriamente')
-            return redirect(url_for('places'))
-        try:
-            name = str(name)
-            description = str(description)
-            latitude = float(latitude)
-            longitude = float(longitude)
-            estado = str(estado)
-
-            return name, description,latitude,longitude,estado
-        except ValueError:
-            print ("ATENCIÓN: Debe llenar todos los campos.")
+            cur.execute('INSERT INTO TBPLACES (name,description,latitude,longitude,image,estado,idorg) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+            (name,description,latitude,longitude,image,estado,idorg))
+        else:
+            cur.execute('INSERT INTO TBPLACES (name,description,latitude,longitude,estado,idorg) VALUES (%s, %s, %s, %s, %s, %s)',
+            (name,description,latitude,longitude,estado,idorg))
+        MYSQL.connection.commit()
+        flash('Ubicación creada satisfactoriamente')
+        return redirect(url_for('places'))
 
 @APP.route('/editarUbicacion/<id>')
 def getPlace(id):
@@ -207,18 +247,19 @@ def updatePlace(id):
         longitude = request.form['longitude']
         image = request.files['image'].filename
         estado = request.form['estado']
+        idorg = session['idorg']
+
         cur = MYSQL.connection.cursor()
         if len(image) != 0:
             f = request.files['image']
             filename = secure_filename(f.filename)
             f.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
-            cur.execute('UPDATE TBPLACES SET NAME = %s, DESCRIPTION = %s, LATITUDE = %s, LONGITUDE = %s, IMAGE = %s, ESTADO = %s  WHERE ID = %s', [name,description,latitude,longitude,image,estado,id])
+            cur.execute('UPDATE TBPLACES SET NAME = %s, DESCRIPTION = %s, LATITUDE = %s, LONGITUDE = %s, IMAGE = %s, ESTADO = %s, IDORG = %s  WHERE ID = %s', [name,description,latitude,longitude,image,estado,idorg,id])
         else:
-            cur.execute('UPDATE TBPLACES SET NAME = %s, DESCRIPTION = %s, LATITUDE = %s, LONGITUDE = %s, ESTADO = %s  WHERE ID = %s', [name,description,latitude,longitude,estado,id])
+            cur.execute('UPDATE TBPLACES SET NAME = %s, DESCRIPTION = %s, LATITUDE = %s, LONGITUDE = %s, ESTADO = %s, IDORG = %s  WHERE ID = %s', [name,description,latitude,longitude,estado,idorg,id])
         MYSQL.connection.commit()
         flash('Ubicación actualizada satisfactoriamente')
         return redirect(url_for('places'))
-
 
 @APP.route('/eliminarUbicacion/<id>')
 def deletePlace(id):
@@ -233,7 +274,89 @@ def perfilUbicacion(id):
     cur = MYSQL.connection.cursor()
     cur.execute('SELECT * FROM TBPLACES WHERE ID = %s', [id])
     data = cur.fetchall()
-    return render_template('perfilTemplate.html', ubicacion = data[0])
+    cur.execute('SELECT A.ID,A.ELEMENTO,B.nomunidad,A.cantmeta,A.cantactual FROM TBREQS A, TBUNIMEDIDA B WHERE IDUBICACION = %s AND A.idunidad = B.id', [id])
+    reqs = cur.fetchall()
+    progreso = round(calcularProgreso(id)*100)
+    print(progreso)
+    return render_template('perfilTemplate.html', ubicacion = data[0], reqs = reqs, progreso = progreso)
+
+def calcularProgreso(id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('select SUM(cantactual)/sum(cantmeta) from tbreqs where idubicacion=%s group by idunidad',[id])
+    progxunidad = cur.fetchall()
+    cur.execute('select COUNT(id) from tbreqs where idubicacion=%s group by idunidad',[id])
+    cantxunidad = cur.fetchall()
+    cur.execute('select COUNT(id) from tbreqs where idubicacion=%s',[id])
+    canttotal = cur.fetchall()
+    progtotal = 0
+
+    for i in range(len(cantxunidad)):
+        progtotal = progtotal + float(progxunidad[i][0])*(cantxunidad[i][0]/canttotal[0][0])
+
+    return progtotal
+
+#Gestion de necesidades
+@APP.route('/necesidades/<id>')
+def getReq(id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('SELECT * FROM TBPLACES WHERE ID = %s', [id])
+    data = cur.fetchall()
+    cur.execute('SELECT * FROM TBUNIMEDIDA')
+    unidades = cur.fetchall()
+    cur.execute('SELECT A.ID,A.ELEMENTO,B.nomunidad,A.cantmeta,A.cantactual FROM TBREQS A, TBUNIMEDIDA B WHERE IDUBICACION = %s AND A.idunidad = B.id', [id])
+    reqs = cur.fetchall()
+    return render_template('necesidades.html', ubicacion = data[0], unidades = unidades, reqs = reqs)
+
+@APP.route('/agregarNecesidad/<id>', methods=['POST'])
+def addReq(id):
+    if request.method == 'POST':
+        elemento = request.form['elemento']
+        cantmeta = request.form['cantmeta']
+        idunidad = request.form['idunidad']
+        idubicacion = id
+
+        cur = MYSQL.connection.cursor()
+        cur.execute('INSERT INTO TBREQS (elemento,cantmeta,idunidad,idubicacion) VALUES (%s, %s, %s, %s)',
+        (elemento,cantmeta,idunidad,idubicacion))
+        MYSQL.connection.commit()
+
+        flash('Necesidad agregada satisfactoriamente')
+        return redirect(url_for('getReq',id = idubicacion))
+
+@APP.route('/<idubica>/editarNecesidad/<id>')
+def getNecesidad(idubica,id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('SELECT * FROM TBPLACES WHERE ID = %s', [idubica])
+    data = cur.fetchall()
+    cur.execute('SELECT * FROM TBUNIMEDIDA')
+    unidades = cur.fetchall()
+    cur.execute('SELECT A.ID,A.ELEMENTO,A.IDUNIDAD,A.cantmeta,A.cantactual,B.nomunidad FROM TBREQS A,TBUNIMEDIDA B WHERE A.IDUBICACION = %s AND A.id= %s AND A.idunidad = B.id', [idubica,id])
+    reqs = cur.fetchall()
+    return render_template('editarNecesidad.html', ubicacion = data[0], unidades = unidades, reqs = reqs[0])
+
+@APP.route('/<idubica>/actualizarNecesidad/<id>', methods = ['POST'])
+def updateReq(idubica,id):
+    if request.method == 'POST':
+        elemento = request.form['elemento']
+        cantmeta = request.form['cantmeta']
+        cantactual = request.form['cantactual']
+        idunidad = request.form['idunidad']
+        idubicacion = idubica
+
+        cur = MYSQL.connection.cursor()
+        cur.execute('UPDATE TBREQS SET ELEMENTO = %s, CANTMETA = %s, CANTACTUAL = %s, IDUNIDAD = %s, IDUBICACION = %s  WHERE ID = %s', [elemento,cantmeta,cantactual,idunidad,idubicacion,id])
+        MYSQL.connection.commit()
+        flash('Necesidad actualizada satisfactoriamente')
+        return redirect(url_for('getReq',id = idubicacion))
+
+@APP.route('/<idubica>/eliminarNecesidad/<id>')
+def deleteReq(idubica,id):
+    idubicacion = idubica
+    cur = MYSQL.connection.cursor()
+    cur.execute('DELETE FROM TBREQS WHERE ID = %s', [id])
+    MYSQL.connection.commit()
+    flash('Necesidad eliminada satisfactoriamente')
+    return redirect(url_for('getReq',id = idubicacion))
 
 #Servicios REST de publicaciones y comentarios
 @APP.route('/post', methods=['POST'])

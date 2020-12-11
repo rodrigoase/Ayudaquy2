@@ -6,13 +6,56 @@
                               background-size: 1200px 300px;
                               background-position:center center;">
         <h1 class="display-4" style="color: white; font-weight: bold;;-webkit-text-stroke: 2px black">{{ ubicacion.1 }}</h1>
-    </div>
-    <div class="row">
-        <div class="col-md-7">
-            <p>Nombre de ubicación: {{ ubicacion.1 }}</p>
-            <p>Descripción: {{ ubicacion.2 }}</p>
-            <p>Nombre imagen: {{ ubicacion.5 }}</p>
+        
+        <div class="col-md-4 float-right">
+            <div class="progress" style="height: 30px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" aria-valuenow="{{ progreso }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progreso }}%;">{{ progreso }}%</div>
+            </div>
         </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-8">
+            <h2>Descripción</h2>
+            <h3 style="color: black;">{{ ubicacion.2 }}</h3>
+            <br>
+            <h2>Tabla de Necesidades</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                
+            </div>
+            <div class="col-md-6">
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-bordered table-striped mb-0">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Elemento</th>
+                                <th>Uni.Medida</th>
+                                <th>Cant.Meta</th>
+                                <th>Cant.Actual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in reqs %}
+                                <tr>
+                                    <td>{{ i.1 }}</td>
+                                    <td>{{ i.2 }}</td>
+                                    <td>{{ i.3 }}</td>
+                                    <td>{{ i.4 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-3">
+                
+            </div>
+        </div>
+        <br>
+        <br>
+
     </div>
 </div>
 {% endblock %}

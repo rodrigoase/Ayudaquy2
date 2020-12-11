@@ -1,0 +1,108 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+        <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active"> 
+                    <div class="carousel-caption">
+                        <h2 class="m-1" style="-webkit-text-stroke: 2px black">AYUDACUY</h2>
+                        <h1 style="color: black;">
+                            Una nueva forma de compartir con aquellos que tienen el mismo espíritu de ayuda que tú.
+                        </h1>
+                    </div>
+                    <img id="fondoVoluntarios" class="w-100" src="/img/voluntarios4.jpg">
+                </div>
+            </div>             
+        </div>
+        <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+            <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+                <div class="my-3 py-3">
+                    <h2 class="display-5"></h2>
+                    <h2 class="display-5">UBICACIONES EN RIESGO</h2>
+                    <p class="lead">Podrás visualizar las ubicaciones que necesitan de tu ayuda. Júntante con tus amigos
+                        y guíense de nuestro mapa.
+                    </p>
+                </div>
+                <div class="bg-light box-shadow mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                    <img id="ongs" class="w-100" src="/img/mapa.jpg" style="border-radius: 21px 21px 0 0;">
+                </div>
+            </div>
+            <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                <div class="my-3 p-3">
+                    <h2 class="display-5">NUESTRA RED SOCIAL</h2>
+                    <p class="lead">Una red social para ayuda social</p>
+                </div>
+                <div class="bg-dark box-shadow mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                    <img id="ongs" class="w-100" src="/img/comparte2.jpg" style="height: 300px;border-radius: 21px 21px 0 0;">
+                </div>
+            </div>
+        </div>
+        <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+            <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                <div class="my-3 p-3">
+                    <h2 class="display-5">NECESIDADES POR UBICACIÓN</h2>
+                    <p class="lead">Podrás visualizar los víveres que requiere cada ubicación en riesgo.</p>
+                </div>
+                <div class="bg-dark box-shadow mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                    <img id="ongs" class="w-100" src="/img/tablaNecesidades.jpg" style="height: 300px;border-radius: 21px 21px 0 0;">
+                </div>
+            </div>
+            <div class="bg-primary mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+                <div class="my-3 py-3">
+                    <h2 class="display-5">ORGANIZACIONES ALIADAS</h2>
+                    <p class="lead">Actualmente, contamos con el apoyo de Unicef, Caritas del Perú y Fe y Alegría.
+                        Estamos seguros que más Organizaciones se unirán a nosotros en favor de quienes más lo necesitan.
+                    </p>
+                </div>
+                <div class="bg-light box-shadow mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+                    <img id="ongs" class="w-100" height="300px" src="/img/imagenOngs.png">
+                </div>
+            </div>
+        </div>
+        <footer class="container py-5">
+            <div class="row">
+                <div class="col-6 col-md">
+                    <h5>Información</h5>
+                    <ul class="list-unstyled text-small">
+                        <li>
+                            <a class="text-muted" href="#">Sobre Nosotros</a>
+                        </li>
+                        <li>
+                            <a class="text-muted" href="#">Misión y Visión</a>
+                        </li>
+                        <li>
+                            <a class="text-muted" href="#">Aliados</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Recursos</h5>
+                    <ul class="list-unstyled text-small">
+                        <li>
+                            <a class="text-muted" href="#">Mapa de ubicaciones en riesgo</a>
+                        </li>
+                        <li>
+                            <a class="text-muted" href="#">Publicaciones</a>
+                        </li>
+                        <li>
+                            <a class="text-muted" href="#">Historial de beneficiados</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Contáctanos</h5>
+                    <ul class="list-unstyled text-small">
+                        <li>
+                            <a class="text-muted" href="#">Nuestros datos</a>
+                        </li>
+                        <li>
+                            <a class="text-muted" href="#">solicitudes@ayudacuy.com</a>
+                        </li>
+                        <li>
+                            <a class="text-muted" href="#">Políticas de servicio</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+{% endblock %}

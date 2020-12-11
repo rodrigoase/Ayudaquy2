@@ -2,10 +2,10 @@
 
 {% block body %}
 <div class="container pt-5">
-    <div class="jumbotron" style="background-image: url({{ url_for('static',filename='img/ubicaciones.jpg') }});
-                              background-size: 1200px 300px;
+    <div class="jumbotron" style="background-image: url({{ url_for('static',filename='img/necesidades1.jpg') }});
+                              background-size: 1200px 220px;
                               background-position:center center;">
-    <h1 class="display-4" style="color: white; font-weight: bold;;-webkit-text-stroke: 2px black">Gestión de ubicaciones</h1>
+    <h1 class="display-4" style="color: white; font-weight: bold;;-webkit-text-stroke: 2px black">Gestión de necesidades</h1>
     </div>
     <div class="row">
         <div class="col-md-5">
@@ -22,31 +22,26 @@
             {% endif %}
             {% endwith %}
             <div class="card card-body bg-dark">
-                <form action="/crearUbicacion" method="POST" enctype="multipart/form-data">
+                <form action="/agregarNecesidad/{{ubicacion.0}}" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
-                        <input type="text" name="name" placeholder="Nombre" class="form-control">
+                        <input type="text" name="name" placeholder="Ubicacion" value="{{ ubicacion.1 }}" class="form-control">
                     </div>
                     <div class="form-group">
-                        <input type="text" name="description" placeholder="Descripción" class="form-control">
+                        <input type="text" name="elemento" placeholder="Elemento" class="form-control">
                     </div>
                     <div class="form-group">
-                        <input type="text" name="latitude" placeholder="Latitud" class="form-control">
+                        <input type="text" name="cantmeta" placeholder="Cantidad Meta" class="form-control">
                     </div>
                     <div class="form-group">
-                        <input type="text" name="longitude" placeholder="Longitud" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <input type="file" name="image" placeholder="Imagen" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <select name="estado" id="estado" class="form-control">
-                            <option value="ACTIVO">Activo</option>
-                            <option value="INACTIVO">Inactivo</option>
+                        <select name="idunidad" id="idunidad" class="form-control">
+                            {% for i in unidades %}
+                                <option value="{{ i.0 }}">{{ i.1 }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block">
-                            Guardar
+                            Agregar
                         </button>
                     </div>
                 </form>
@@ -56,29 +51,24 @@
             <table id="dtVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Latitud</th>
-                        <th>Longitud</th>
-                        <th>Imagen</th>
-                        <th>Estado</th>
+                        <th>Elemento</th>
+                        <th>Uni.Medida</th>
+                        <th>Cant.Meta</th>
+                        <th>Cant.Actual</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for i in ubicaciones %}
+                    {% for i in reqs %}
                         <tr>
                             <td>{{ i.1 }}</td>
                             <td>{{ i.2 }}</td>
                             <td>{{ i.3 }}</td>
                             <td>{{ i.4 }}</td>
-                            <td>{{ i.5 }}</td>
-                            <td>{{ i.6 }}</td>
                             <td>
                                 <span>
-                                    <a href="/editarUbicacion/{{i.0}}"><i class="fas fa-edit"></i></a> / 
-                                    <a href="/necesidades/{{i.0}}"><i class="far fa-plus-square"></i></a> / 
-                                    <a href="/eliminarUbicacion/{{i.0}}"><i class="fas fa-trash-alt"></i></a>
+                                    <a href="/{{ ubicacion.0 }}/editarNecesidad/{{i.0}}"><i class="fas fa-edit"></i></a> /
+                                    <a href="/{{ ubicacion.0 }}/eliminarNecesidad/{{i.0}}"><i class="fas fa-trash-alt"></i></a>
                                 </span>             
                             </td>
                         </tr>
@@ -87,5 +77,7 @@
             </table>
         </div>
     </div>
+    <br>
+    <br>
 </div>
 {% endblock %}

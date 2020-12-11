@@ -1,0 +1,81 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="container pt-5">
+    <div class="jumbotron" style="background-image: url({{ url_for('static',filename='img/necesidades1.jpg') }});
+                              background-size: 1200px 220px;
+                              background-position:center center;">
+    <h1 class="display-4" style="color: white; font-weight: bold;;-webkit-text-stroke: 2px black">Gestión de necesidades</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            {% with mensajes = get_flashed_messages() %}
+            {% if mensajes %}
+            {% for i in mensajes  %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>{{ i }}</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor  %}
+            {% endif %}
+            {% endwith %}
+            <div class="card card-body bg-dark">
+                <form action="/{{ubicacion.0}}/actualizarNecesidad/{{reqs.0}}" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="text" name="name" placeholder="Ubicacion" value="{{ ubicacion.1 }}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="elemento" placeholder="Elemento" value="{{ reqs.1 }}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="cantmeta" placeholder="Cantidad Meta" value="{{ reqs.3 }}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="cantactual" placeholder="Cantidad Actual" value="{{ reqs.4 }}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <select name="idunidad" id="idunidad" class="form-control">
+                            {% for i in unidades %}
+                                {% if i.0 == reqs.2 %}
+                                    <option value="{{ i.0 }}" selected>{{ i.1 }}</option>
+                                {% else %}
+                                    <option value="{{ i.0 }}">{{ i.1 }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            Actualizar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <table id="dtVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Elemento</th>
+                        <th>Uni.Medida</th>
+                        <th>Cant.Meta</th>
+                        <th>Cant.Actual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>{{ reqs.1 }}</td>
+                            <td>{{ reqs.5 }}</td>
+                            <td>{{ reqs.3 }}</td>
+                            <td>{{ reqs.4 }}</td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+    <br>
+</div>
+{% endblock %}

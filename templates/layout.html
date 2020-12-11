@@ -11,7 +11,9 @@
     <link href="/css/mdb.min.css" rel="stylesheet">
     <link href="/css/addons/datatables.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/style2.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/estilos.css">
+    <link rel="stylesheet" href="/css/quienesSomos.css">
     <title>Ayudaquy</title>
 </head>
 <body>
@@ -24,42 +26,40 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarColor02">
           <ul class="navbar-nav mr-auto">
-            {% if session['rol']=='USER' %}
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Inicio <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/mapa">Mapa</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Feedback</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Autores</a>
-            </li>
-            {% elif session['rol']=='ADMIN' %}
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Inicio <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/mapa">Mapa</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Feedback</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Autores</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrador</a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item" href="/admin">Gestionar usuarios</a>
-                <a class="dropdown-item" href="/ubicaciones">Gestionar ubicaciones</a>
-                <!-- <a class="dropdown-item" href="#">Opción 3</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Opción 4</a> -->
-              </div>
-            </li>
+            {% if session['rol']=='USER' or session['rol']=='ADMIN' or session['rol']=='ORG'%}
+              <li class="nav-item active">
+                <a class="nav-link" href="/">Inicio <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/mapa">Mapa</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Feedback</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/quienesSomos">¿Quienes somos?</a>
+              </li>
+            {% endif %}
+            {% if session['rol']=='ADMIN' %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrador</a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/admin">Gestionar usuarios</a>
+                  <a class="dropdown-item" href="/ubicaciones">Gestionar ubicaciones</a>
+                  <a class="dropdown-item" href="/organizaciones">Gestionar organizaciones</a>
+                  <!-- <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Opción 4</a> -->
+                </div>
+              </li>
+            {% elif session['rol']=='ORG' %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrador</a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/ubicaciones">Gestionar ubicaciones</a>
+                  <!-- <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Opción 4</a> -->
+                </div>
+              </li>
             {% endif %}
           </ul>
           <ul class="navbar-nav my-2 my-lg-0">
