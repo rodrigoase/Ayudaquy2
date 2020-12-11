@@ -358,6 +358,71 @@ def deleteReq(idubica,id):
     flash('Necesidad eliminada satisfactoriamente')
     return redirect(url_for('getReq',id = idubicacion))
 
+#Gestión de organizaciones
+
+@APP.route('/organizaciones')
+def orgs():
+    cur = MYSQL.connection.cursor()
+    cur.execute('SELECT * FROM TBORGANIZACION')
+    data = cur.fetchall()
+    return render_template('organizaciones.html', organizaciones = data)
+
+# @APP.route('/crearOrganizacion', methods=['POST'])
+# def addOrg():
+
+#     if request.method == 'POST':
+#         rsocial = request.form['rsocial']
+#         ruc = request.form['ruc']
+#         nrotelefono = request.form['nrotelefono']
+#         email = request.form['email']
+#         djurada = request.files['djurada']
+#         description = request.form['description']
+#         estado = request.form['estado']
+
+#         cur = MYSQL.connection.cursor()
+#         cur.execute('INSERT INTO TBORGANIZACION (rsocial,ruc,nrotelefono,email,djurada,description,estado) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+#         (rsocial,ruc,nrotelefono,email,djurada,description,estado))
+
+#         MYSQL.connection.commit()
+#         flash('Organización creada satisfactoriamente')
+#         return redirect(url_for('orgs'))
+
+@APP.route('/editarOrganizacion/<id>')
+def getOrg(id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('SELECT * FROM TBORGANIZACION WHERE ID = %s', [id])
+    data = cur.fetchall()
+    return render_template('editarOrganizacion.html', organizacion = data[0])
+
+@APP.route('/actualizarOrganizacion/<id>', methods = ['POST'])
+def updateOrg(id):
+    if request.method == 'POST':
+        rsocial = request.form['rsocial']
+        ruc = request.form['ruc']
+        nrotelefono = request.form['nrotelefono']
+        email = request.form['email']
+        djurada = request.files['djurada']
+        ndjurada = request.files['djurada'].filename
+        description = request.form['description']
+        estado = request.form['estado']
+
+        cur = MYSQL.connection.cursor()
+        if len(ndjurada) != 0:
+            cur.execute('UPDATE TBORGANIZACION SET RSOCIAL = %s, RUC = %s, NROTELEFONO = %s, EMAIL = %s, DJURADA = %s, DESCRIPTION = %s, ESTADO = %s  WHERE ID = %s', [rsocial,ruc,nrotelefono,email,djurada,description,estado,id])
+        else:
+            cur.execute('UPDATE TBORGANIZACION SET RSOCIAL = %s, RUC = %s, NROTELEFONO = %s, EMAIL = %s, DESCRIPTION = %s, ESTADO = %s  WHERE ID = %s', [rsocial,ruc,nrotelefono,email,description,estado,id])
+        MYSQL.connection.commit()
+        flash('Organización actualizada satisfactoriamente')
+        return redirect(url_for('orgs'))
+
+@APP.route('/eliminarOrganizacion/<id>')
+def deleteOrg(id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('DELETE FROM TBORGANIZACION WHERE ID = %s', [id])
+    MYSQL.connection.commit()
+    flash('Organización eliminada satisfactoriamente')
+    return redirect(url_for('orgs'))
+
 #Servicios REST de publicaciones y comentarios
 @APP.route('/post', methods=['POST'])
 def posts():

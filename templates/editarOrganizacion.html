@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="container pt-5">
+    <div class="col-md-6 offset-md-4">
+        <div class="card card-body bg-dark">
+            <form action="/actualizarOrganizacion/{{organizacion.0}}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="text" name="rsocial" placeholder="Razón Social" value="{{ organizacion.1 }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="ruc" placeholder="RUC" value="{{ organizacion.2 }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="nrotelefono" placeholder="Teléfono" value="{{ organizacion.3 }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="email" placeholder="Email" value="{{ organizacion.4 }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="file" name="djurada" placeholder="Declaración Jurada" value="{{ organizacion.5 }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="description" placeholder="Descripción" value="{{ organizacion.6 }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <select name="estado" id="estado" class="form-control">
+                        {% if organizacion.7 == 'ACTIVO' %}
+                            <option value="ACTIVO" selected>Activo</option>
+                            <option value="INACTIVO">Inactivo</option>
+                        {% else %}
+                            <option value="ACTIVO">Activo</option>
+                            <option value="INACTIVO" selected>Inactivo</option>
+                        {% endif %}
+                    </select>    
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
