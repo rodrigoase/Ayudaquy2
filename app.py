@@ -483,6 +483,17 @@ def get_comments():
     comments = cur.fetchall()
     return comments
 
+def get_userData(user_id):
+    cur = MYSQL.connection.cursor()
+    cur.execute('select * from tbusers where id = ' + user_id)
+    userData = cur.fetchall()
+    return userData
+
+@APP.route('/perfil/<id>')
+def perfil(id):
+    user_data = get_userData(user_id=id)
+    return render_template('perfil.html', user_data = user_data)
+
 
 if __name__ == '__main__':
     APP.run(
